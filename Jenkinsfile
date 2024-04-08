@@ -68,6 +68,30 @@ pipeline{
         }
 
     }
+
+    post {
+        success {
+            script {
+                // Slack notification on successful build
+                slackSend(
+                    channel: "jenkinschannel",
+                    color: "#00FF80",
+                    message:"SUCCESSED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+                )
+            }
+        }
+        
+        failure {
+            script {
+                // Slack notification on failed build
+                slackSend(
+                    channel: "jenkinschannel",
+                    color: "#FF0000",
+                    message:"FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+                )
+            }
+        }
+    }
 }
 
 
