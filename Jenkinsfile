@@ -8,7 +8,12 @@ pipeline{
         DB_IMAGE_NAME = 'mysql'                                                // name of DB image
         APP_PATH = 'Docker/FlaskApp/Dockerfile'                               // path to App Dockerfile in GitHub repo
         DB_PATH = 'Docker/MySQL_DB/Dockerfile'                               // path to DB Dockerfile in GitHub repo
-    }
+        DEPLOTMENT_PATH = 'Kubernetes/deployment.yaml'                      // path to deployment.yml in GitHub repo
+        STATEFULSET_PATH = 'Kubernetes/statefulset.yaml'                   // path to the statefulset.yml in GitHub repo
+        AWS_CREDENTIALS_ID = 'aws'                                        // AWS credentials variable ID in jenkins-credentials
+        KUBECONFIG_ID = 'kubeconfig'                                     // EKS-cluster credentials variable ID in jenkins-credentials
+        }
+    
     stages{
         stage("Checkout from Github"){
             steps{
@@ -63,5 +68,6 @@ pipeline{
         }
 
     }
-
 }
+
+
