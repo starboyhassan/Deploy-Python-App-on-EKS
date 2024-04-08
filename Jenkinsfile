@@ -15,6 +15,7 @@ pipeline{
                 git branch: 'main', url: 'https://github.com/starboyhassan/Deploy-Python-App-on-EKS'
             }
         }
+
         stage('Push Images') {
             steps {
                 withAWS(credentials: "${AWS_CREDENTIALS_ID}"){
@@ -22,6 +23,14 @@ pipeline{
                     sh "docker push ${ECR_REPO}:${APP_IMAGE_NAME}-${BUILD_NUMBER}"
                     sh "docker push ${ECR_REPO}:${DB_IMAGE_NAME}-${BUILD_NUMBER}" 
                 }
+            }
+        }
+
+        stage('Remove Images') {
+            steps {
+                // delete images from jenkins server
+                sh "docker rmi ${ECR_REPO}:${APP_IMAGE_NAME}-${BUILD_NUMBER}"
+                sh "docker rmi ${ECR_REPO}:${DB_IMAGE_NAME}-${BUILD_NUMBER}"
             }
         }
     }
