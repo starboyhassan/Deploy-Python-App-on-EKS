@@ -33,6 +33,24 @@ pipeline{
                 sh "docker rmi ${ECR_REPO}:${DB_IMAGE_NAME}-${BUILD_NUMBER}"
             }
         }
+
+        stage('Deploy k8s Manifests') {
+            steps {
+                // update images in deployment & statefulset manifists with ECR new images
+                sh "sed -i 's|image:.*|image: ${ECR_REPO}:${APP_IMAGE_NAME}-${BUILD_NUMBER}|g' ${DEPLOTMENT_PATH}"
+                sh "sed -i 's|image:.*|image: ${ECR_REPO}:${DB_IMAGE_NAME}-${BUILD_NUMBER}|g' ${STATEFULSET_PATH}"
+                    
+                //Deploy kubernetes manifists in EKS cluster
+                withAWS(credentials: "${AWS_CREDENTIALS_ID}"){
+                    withCredentials([file(credentialsId: "${KUBECONFIG_ID}", variable: 'KUBECONFIG')]) {
+                        sh "kubectl apply -f Kubernetes"   // 'Kubernetes' is a directory contains all kubernetes manifists
+                    }                          
+                }
+            }
+        }
+
+
+
     }
 
 }
