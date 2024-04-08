@@ -49,7 +49,18 @@ pipeline{
             }
         }
 
-
+        stage('Website URL') {
+            steps {
+                script {
+                    withAWS(credentials: "${AWS_CREDENTIALS_ID}"){
+                        withCredentials([file(credentialsId: "${KUBECONFIG_ID}", variable: 'KUBECONFIG')]) {
+                            def url = sh(script: 'kubectl get svc flask-app-service -o jsonpath="{.status.loadBalancer.ingress[0].hostname}"', returnStdout: true).trim()
+                            echo "Website url: http://${url}/"
+                        }
+                    }
+                }
+            }
+        }
 
     }
 
