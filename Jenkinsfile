@@ -60,7 +60,7 @@ pipeline{
                 //Deploy kubernetes manifists in EKS cluster
                 withAWS(credentials: "${AWS_CREDENTIALS_ID}"){
                     withCredentials([file(credentialsId: "${KUBECONFIG_ID}", variable: 'KUBECONFIG')]) {
-                        sh "kubectl apply -f K8S"   // 'Kubernetes' is a directory contains all kubernetes manifists
+                        sh "kubectl apply -f K8S"   // 'K8S' is a directory contains all kubernetes manifists
                     }                          
                 }
             }
