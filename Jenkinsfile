@@ -47,12 +47,16 @@ pipeline{
             }
         }
 
-        stage('Deploy k8s Manifests') {
+        stage('Update k8s Manifests') {
             steps {
                 // update images in deployment & statefulset manifists with ECR new images
                 sh "sed -i 's|image:.*|image: ${ECR_REPO}:${APP_IMAGE_NAME}-${BUILD_NUMBER}|g' ${DEPLOTMENT_PATH}"
                 sh "sed -i 's|image:.*|image: ${ECR_REPO}:${DB_IMAGE_NAME}-${BUILD_NUMBER}|g' ${STATEFULSET_PATH}"
                     
+            }
+        }
+        stage('Deploy on EKS') {
+            steps {
                 //Deploy kubernetes manifists in EKS cluster
                 withAWS(credentials: "${AWS_CREDENTIALS_ID}"){
                     withCredentials([file(credentialsId: "${KUBECONFIG_ID}", variable: 'KUBECONFIG')]) {
@@ -61,7 +65,6 @@ pipeline{
                 }
             }
         }
-
         stage('Website URL') {
             steps {
                 script {
