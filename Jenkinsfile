@@ -20,6 +20,14 @@ pipeline{
                 git branch: 'main', url: 'https://github.com/starboyhassan/Deploy-Python-App-on-EKS'
             }
         }
+        
+        stage('Build Images') {
+            steps {
+                // build and tag images to push them to ECR
+                sh "docker build -t ${ECR_REPO}:${APP_IMAGE_NAME}-${BUILD_NUMBER} -f ${APP_PATH} ."
+                sh "docker build -t ${ECR_REPO}:${DB_IMAGE_NAME}-${BUILD_NUMBER} -f ${DB_PATH} ."
+            }
+        }
 
         stage('Push Images') {
             steps {
